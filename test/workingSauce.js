@@ -28,34 +28,42 @@ const ONDEMAND_URL = `https://${SAUCE_USERNAME}:${SAUCE_ACCESS_KEY}@ondemand.sau
 * https://github.com/saucelabs/node-saucelabs
 */
 
-describe('Working Sauce', function () {
+describe('Working Sauce', function () {   
+    let driver  
+    beforeEach(async function() {
+        driver = await new Builder().withCapabilities(utils.workingCapabilities)
+            .usingServer(ONDEMAND_URL).build();
+      
+    })
+
+    //Bonus section
+    afterEach(async function() {
+      const testPassed = this.currentTest.state = 'passed';
+      driver.executeScript('sauce:job-result=' + testPassed);
+      await driver.quit();
+
+    })
+
     it('should go to Google and click Sauce', async function () {
-        let driver = await new Builder().withCapabilities(utils.workingCapabilities)
-                    .usingServer(ONDEMAND_URL).build();
-
-
     /**
      * Goes to Sauce Lab's guinea-pig page and verifies the title
      */
 
     await driver.get("https://saucelabs.com/test/guinea-pig");
     await assert.strictEqual("I am a page title - Sauce Labs", await driver.getTitle());
-
+   
     // Task I
-
     //await driver.findElement({id: 'i am a link'}).click();
 
     // Task II
-
     //await driver.findElement({id: 'i_am_a_textbox'}).clear();
     //await driver.findElement({id: 'i_am_a_textbox'}).sendKeys('Sauce');
 
     // Task III
-
     //await driver.findElement({id: 'fbemail'}).sendKeys('Tony.y.luo@gmail.com');
     //await driver.findElement({id: 'comments'}).sendKeys('Task III test');
     //await driver.findElement({id: 'submit'}).click;
-
-    await driver.quit();
+    
     });
+    
 });
